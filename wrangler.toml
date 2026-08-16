@@ -1,0 +1,19 @@
+name = "qb-invoice-auto-email-worker"
+main = "cloudflare-email-worker.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+# Environment variables (set in Cloudflare dashboard > Workers > Settings > Variables)
+# API_URL = "https://your-app.vercel.app/api/ingest"
+# EMAIL_WORKER_SECRET = "your-shared-secret-here"
+
+# Email Workers don't use traditional bindings, but you can use KV for user mapping
+# [[kv_namespaces]]
+# binding = "USER_MAP"
+# id = "your-kv-namespace-id"
+
+# Triggers - Email Workers are triggered by email routing, not HTTP
+# This file is for `wrangler deploy` configuration only
+
+[build]
+command = "echo 'No build step needed'"
