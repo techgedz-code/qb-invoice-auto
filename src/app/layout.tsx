@@ -1,4 +1,3 @@
-import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
@@ -31,4 +30,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       </body>
     </html>
   );
-}
+
+"// Last redeploy triggered: $(date /t) $(time /t)"  
+  
+// Last redeploy triggered: $(date /t) $(time /t) 
+// Last redeploy triggered: %d% %t% 
