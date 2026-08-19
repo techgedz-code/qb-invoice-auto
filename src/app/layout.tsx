@@ -31,7 +31,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 
-"// Last redeploy triggered: $(date /t) $(time /t)"  
   
-// Last redeploy triggered: $(date /t) $(time /t) 
-// Last redeploy triggered: %d% %t% 
