@@ -19,9 +19,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Find user by email
+    // Find user by clerk_user_id
     const user = await turso.execute({
-      sql: 'SELECT * FROM users WHERE email = ?',
+      sql: 'SELECT * FROM users WHERE clerk_user_id = ?',
       args: [userEmail],
     });
 

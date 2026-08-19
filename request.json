@@ -1,0 +1,13 @@
+HTTP/1.1 500 Internal Server Error
+Cache-Control: public, max-age=0, must-revalidate
+Content-Length: 0
+Date: Wed, 19 Aug 2026 10:34:52 GMT
+Server: Vercel
+Strict-Transport-Security: max-age=63072000; includeSubDomains; preload
+X-Clerk-Auth-Message: Invalid JWT form. A JWT consists of three parts separated by dots. (reason=token-invalid, token-carrier=header)
+X-Clerk-Auth-Reason: token-invalid
+X-Clerk-Auth-Status: signed-out
+X-Matched-Path: /api/ingest
+X-Vercel-Cache: MISS
+X-Vercel-Id: sin1::iad1::5kmsr-1787135691842-dc756e6bfbf1
+
