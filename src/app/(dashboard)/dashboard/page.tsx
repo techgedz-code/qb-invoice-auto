@@ -1,18 +1,20 @@
-import { auth } from '@clerk/nextjs/server';
+import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { turso, getInvoicesByUser } from '@/lib/turso';
 import { DashboardClient } from './dashboard-client';
 
 export default async function DashboardPage() {
-  const { userId } = await auth();
+  const session = await auth();
   
-  if (!userId) {
+  if (!session?.user?.id) {
     redirect('/sign-in');
   }
 
+  const internalUserId = session.user.id;
+
   const user = await turso.execute({
-    sql: 'SELECT * FROM users WHERE clerk_user_id = ?',
-    args: [userId],
+    sql: 'SELECT * FROM users WHERE id = ?',
+    args: [internalUserId],
   });
 
   if (!user.rows[0]) {
@@ -20,7 +22,6 @@ export default async function DashboardPage() {
   }
 
   const userData = user.rows[0];
-  const internalUserId = userData.id as string;
 
   // Get invoices (returns rows already parsed with line_items as JSON)
   const invoices = await getInvoicesByUser(internalUserId, { limit: 50 }) as any[];
