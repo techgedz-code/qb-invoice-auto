@@ -17,7 +17,7 @@ const db = drizzle(client, {
 })
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  debug: process.env.NODE_ENV === "development",
+  debug: true,
   providers: [
     Google({
       clientId: process.env.GOOGLE_OAUTH_CLIENT_ID!,
