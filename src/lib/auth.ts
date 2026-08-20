@@ -36,17 +36,20 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     async signIn({ user, account, profile }) {
       if (account?.provider === "google") {
         try {
+          console.log("[auth] signIn callback for:", user.email)
           // Upsert user in Turso database
           const existingUsers = await db.select().from(users).where(eq(users.email, user.email!))
           
           if (existingUsers.length === 0) {
+            const newUserId = user.id || crypto.randomUUID()
             await db.insert(users).values({
-              id: user.id || crypto.randomUUID(),
+              id: newUserId,
               email: user.email!,
               name: user.name,
               image: user.image,
               emailVerified: new Date(),
             })
+            console.log("[auth] Created new user:", newUserId)
           } else {
             // Update existing user
             await db.update(users)
@@ -57,9 +60,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
                 updatedAt: new Date(),
               })
               .where(eq(users.email, user.email!))
+            console.log("[auth] Updated existing user:", user.email)
           }
         } catch (error) {
-          console.error("Error upserting user:", error)
+          console.error("[auth] Error upserting user:", error)
+          // Don't block sign-in on DB errors
         }
       }
       return true
