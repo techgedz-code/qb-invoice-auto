@@ -1,19 +1,10 @@
 import NextAuth from "next-auth"
 import Google from "next-auth/providers/google"
 import { createClient } from "@libsql/client"
-import { drizzle } from "drizzle-orm/libsql"
-import { users } from "./schema"
-import { eq } from "drizzle-orm"
 
 const client = createClient({
   url: process.env.TURSO_DATABASE_URL!,
   authToken: process.env.TURSO_AUTH_TOKEN!,
-})
-
-const db = drizzle(client, {
-  schema: {
-    users,
-  },
 })
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
@@ -34,32 +25,28 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return baseUrl
     },
     async signIn({ user, account, profile }) {
-      if (account?.provider === "google") {
+      if (account?.provider === "google" && user.email) {
         try {
           console.log("[auth] signIn callback for:", user.email)
-          // Upsert user in Turso database
-          const existingUsers = await db.select().from(users).where(eq(users.email, user.email!))
+          // Use raw SQL to avoid Drizzle schema mismatch
+          const existingUsers = await client.execute({
+            sql: 'SELECT id FROM users WHERE email = ?',
+            args: [user.email],
+          })
           
-          if (existingUsers.length === 0) {
+          if (existingUsers.rows.length === 0) {
             const newUserId = user.id || crypto.randomUUID()
-            await db.insert(users).values({
-              id: newUserId,
-              email: user.email!,
-              name: user.name,
-              image: user.image,
-              emailVerified: new Date(),
+            await client.execute({
+              sql: `INSERT INTO users (id, email, name, image, email_verified, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?)`,
+              args: [newUserId, user.email, user.name || null, user.image || null, Date.now(), Date.now(), Date.now()],
             })
             console.log("[auth] Created new user:", newUserId)
           } else {
-            // Update existing user
-            await db.update(users)
-              .set({
-                name: user.name,
-                image: user.image,
-                emailVerified: new Date(),
-                updatedAt: new Date(),
-              })
-              .where(eq(users.email, user.email!))
+            const userId = existingUsers.rows[0].id as string
+            await client.execute({
+              sql: `UPDATE users SET name = ?, image = ?, email_verified = ?, updated_at = ? WHERE id = ?`,
+              args: [user.name || null, user.image || null, Date.now(), Date.now(), userId],
+            })
             console.log("[auth] Updated existing user:", user.email)
           }
         } catch (error) {
