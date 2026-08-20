@@ -1,28 +1,35 @@
-import { Geist, Geist_Mono } from "next/font/google"
-import { AuthProvider } from "@/components/auth-provider"
-import "./globals.css"
+import { Geist, Geist_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
+import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
-})
+});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
   subsets: ["latin"],
-})
+});
 
-export const metadata = {
+export const metadata: Metadata = {
   title: "QB Invoice Auto",
   description: "Forward invoice emails. Get structured data in QuickBooks.",
-}
+};
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
       <body className="min-h-full flex flex-col">
-        <AuthProvider>{children}</AuthProvider>
+        <ClerkProvider>
+          {children}
+        </ClerkProvider>
       </body>
     </html>
-  )
-}
+  );
+
+  
+"// Force redeploy: $(date /t) $(time /t)"  

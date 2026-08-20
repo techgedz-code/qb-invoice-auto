@@ -1,0 +1,3 @@
+41d23d7 Trigger Vercel redeploy - update timestamp
+ab38e07 Add ClerkProvider to layout and create sign-in/sign-up pages
+a2a109d Initial commit: QB Invoice Auto - Email-to-QuickBooks automation
